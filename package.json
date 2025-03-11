@@ -12,15 +12,24 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@stripe/stripe-js": "^6.0.0",
+    "axios": "^1.8.2",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "framer-motion": "^12.4.11",
     "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.479.0",
     "mongoose": "^8.11.0",
-    "stripe": "^17.7.0"
+    "react-confetti": "^6.4.0",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "^7.3.0",
+    "recharts": "^2.15.1",
+    "stripe": "^17.7.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
