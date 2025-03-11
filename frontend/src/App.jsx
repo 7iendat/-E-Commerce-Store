@@ -1,10 +1,22 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import Navbar from "./components/Narbar";
+import Navbar from "./components/Navbar";
+import { Toaster } from "react-hot-toast";
+import useUserStore from "./stores/useUserStore";
+import { useEffect } from "react";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
+  const { user, checkAuth, checkingAuth } = useUserStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (checkingAuth) return <LoadingSpinner />;
+
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
       {/* Bg gradient */}
@@ -17,10 +29,20 @@ function App() {
       <div className="relative z-50 pt-20">
         <Navbar />
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/"
+            element={user ? <HomePage /> : <Navigate to={"/login"} />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/signup"
+            element={!user ? <SignUpPage /> : <Navigate to={"/"} />}
+          />
         </Routes>
+        <Toaster />
       </div>
     </div>
   );

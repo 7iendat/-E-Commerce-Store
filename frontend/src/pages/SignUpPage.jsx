@@ -10,9 +10,9 @@ import {
   UserPlus2,
 } from "lucide-react";
 import { Link } from "react-router";
+import useUserStore from "../stores/useUserStore";
 
 const SignUpPage = () => {
-  const loading = false;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,8 +20,11 @@ const SignUpPage = () => {
     confirmPassword: "",
   });
 
+  const { signUp, user, loading } = useUserStore();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    signUp(formData);
     console.log(formData);
   };
 

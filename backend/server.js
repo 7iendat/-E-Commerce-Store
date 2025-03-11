@@ -24,7 +24,7 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/analytics", analyticRoutes);
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
   connectionDB();
   console.log(`Server is running in url => http://localhost:${PORT}`);
 });
