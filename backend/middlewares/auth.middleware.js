@@ -18,7 +18,7 @@ export const protectRoute = async (req, res, next) => {
       if (!user) return res.status(401).json({ message: "User not found" });
 
       req.user = user;
-      next();
+      return next();
     } catch (error) {
       if (error.name === "TokenExpiredError")
         return res
@@ -36,7 +36,7 @@ export const protectRoute = async (req, res, next) => {
 };
 
 export const adminRoute = async (req, res, next) => {
-  if (req.user && req.user.role === "admin") next();
+  if (req.user && req.user.role === "admin") return next();
 
   return res.status(403).json({ message: "Access denied - Admin only" });
 };
