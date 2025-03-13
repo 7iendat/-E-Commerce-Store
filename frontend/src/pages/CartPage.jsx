@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "./OrderSummary";
+import GiftCouponCart from "../components/GiftCouponCart";
 
 const CartPage = () => {
     const { cart } = useCartStore();
@@ -42,7 +43,7 @@ const CartPage = () => {
                             className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
                         >
                             <OrderSummary />
-                            {/* <GiftCouponCart/> */}
+                            <GiftCouponCart />
                         </motion.div>
                     )}
                 </div>
