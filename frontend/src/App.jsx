@@ -79,7 +79,7 @@ function App() {
                     />
 
                     <Route
-                        path="purchase-success"
+                        path="/purchase-success"
                         element={
                             user ? (
                                 <PurchaseSuccessPage />
@@ -90,7 +90,7 @@ function App() {
                     />
 
                     <Route
-                        path="purchase-cancel"
+                        path="/purchase-cancel"
                         element={
                             user ? (
                                 <PurchaseCancelPage />

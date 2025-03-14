@@ -29,6 +29,7 @@ export const createCheckoutSession = async (req, res) => {
         });
 
         let coupon = null;
+
         if (couponCode) {
             coupon = await Coupon.findOne({
                 code: couponCode,
@@ -61,6 +62,13 @@ export const createCheckoutSession = async (req, res) => {
             metadata: {
                 userId: req.user._id.toString(),
                 couponCode: couponCode || "",
+                products: JSON.stringify(
+                    products.map((p) => ({
+                        id: p._id,
+                        quantity: p.quantity,
+                        price: p.price,
+                    }))
+                ),
             },
         });
 
@@ -95,7 +103,9 @@ export const checkSuccess = async (req, res) => {
                     }
                 );
             }
-
+            if (!session.metadata || !session.metadata.products) {
+                throw new Error("Metadata or products is missing");
+            }
             // create new order
             const products = JSON.parse(session.metadata.products);
             const newOrder = new Order({
@@ -106,7 +116,7 @@ export const checkSuccess = async (req, res) => {
                     price: p.price,
                 })),
                 totalAmount: session.amount_total / 100,
-                paymentIntent: session.payment_intent,
+                // paymentIntent: session.payment_intent,
                 stripeSessionId: sessionId,
             });
 
@@ -138,6 +148,7 @@ const createStripeCoupon = async (discountPercentage) => {
 };
 
 const createNewCoupon = async (userId) => {
+    await Coupon.findOneAndDelete({ userId });
     const newCoupon = new Coupon({
         code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
         discountPercentage: 10,

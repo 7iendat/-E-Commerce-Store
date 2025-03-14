@@ -21,7 +21,7 @@ const OrderSummary = () => {
         const stripe = await stripePromise;
         const res = await axiosInstance.post(
             "/payments/create-checkout-session",
-            { products: cart, coupon: coupon ? coupon.code : null }
+            { products: cart, couponCode: coupon ? coupon.code : null }
         );
 
         const session = res.data;
