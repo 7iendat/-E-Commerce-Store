@@ -28,7 +28,7 @@ const AnalyticsTab = () => {
         const fetchAnalyticsData = async () => {
             try {
                 const res = await axiosInstance.get("/analytics");
-                console.log("res", res);
+
                 setAnalyticsData(res.data.analyticsData);
                 setDailySalesData(res.data.dailySalesData);
                 setIsLoading(false);
@@ -46,25 +46,25 @@ const AnalyticsTab = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ">
                 <AnalyticsCard
-                    title={"Total Users"}
+                    title={"Tổng người dùng"}
                     value={analyticsData.users?.toLocaleString()}
                     icon={Users}
                     color={"from-emerald-500 to-teal-700"}
                 />
                 <AnalyticsCard
-                    title={"Total Products"}
+                    title={"Tổng sản phẩm"}
                     value={analyticsData.products?.toLocaleString()}
                     icon={Package}
                     color={"from-emerald-500 to-green-700"}
                 />
                 <AnalyticsCard
-                    title={"Total Sales"}
+                    title={"Tổng sản phẩm đã bán"}
                     value={analyticsData.totalSales?.toLocaleString()}
                     icon={ShoppingCart}
                     color={"from-emerald-500 to-cyan-700"}
                 />
                 <AnalyticsCard
-                    title={"Total Revenue"}
+                    title={"Tổng doanh thu"}
                     value={`$${analyticsData.totalRevenue?.toLocaleString()}`}
                     icon={DollarSign}
                     color={"from-emerald-500 to-lime-700"}

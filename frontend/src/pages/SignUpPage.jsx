@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import {
     ArrowRight,
     CheckCircle,
+    Eye,
+    EyeOff,
     Loader,
     Lock,
     Mail,
@@ -20,12 +22,67 @@ const SignUpPage = () => {
         confirmPassword: "",
     });
 
+    const [error, setError] = useState({
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const validateEmail = (value) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+            setError((prev) => ({
+                ...prev,
+                email: "Email không được để trống",
+            }));
+        } else if (!emailRegex.test(value)) {
+            setError((prev) => ({ ...prev, email: "Email không hợp lệ" }));
+        } else {
+            setError((prev) => ({ ...prev, email: "" }));
+        }
+        setFormData({
+            ...formData,
+            email: value,
+        });
+    };
+
+    const validatePassword = (value) => {
+        if (value.length < 6) {
+            setError((prev) => ({
+                ...prev,
+                password: "Mật khẩu phải có ít nhất 6 ký tự",
+            }));
+        } else {
+            setError((prev) => ({ ...prev, password: "" }));
+        }
+        setFormData({
+            ...formData,
+            password: value,
+        });
+    };
+
+    const validateConfirmPassword = (value) => {
+        if (value !== formData.password) {
+            setError((prev) => ({
+                ...prev,
+                confirmPassword: "Mật khẩu không khớp",
+            }));
+        } else {
+            setError((prev) => ({ ...prev, confirmPassword: "" }));
+        }
+        setFormData({
+            ...formData,
+            confirmPassword: value,
+        });
+    };
+
     const { signUp, user, loading } = useUserStore();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         signUp(formData);
-        console.log(formData);
     };
 
     return (
@@ -37,7 +94,7 @@ const SignUpPage = () => {
                 transition={0.8}
             >
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-emerald-400 ">
-                    Create your account
+                    Tạo tài khoản mới!
                 </h2>
             </motion.div>
 
@@ -55,7 +112,7 @@ const SignUpPage = () => {
                                 htmlFor="name"
                                 className="block text-sm font-medium text-gray-300"
                             >
-                                Full name
+                                Tên người dùng
                             </label>
                             <div className="mt-1 relative rounded-md shadow-sm">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -98,15 +155,17 @@ const SignUpPage = () => {
                                     required
                                     value={formData.email}
                                     onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            email: e.target.value,
-                                        })
+                                        validateEmail(e.target.value)
                                     }
                                     className="block w-full px-3 py-2 pl-10 bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
                                     placeholder="json.nguyen@gmail.com"
                                 />
                             </div>
+                            {error.email && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {error.email}
+                                </p>
+                            )}
                         </div>
 
                         {/* password */}
@@ -115,7 +174,7 @@ const SignUpPage = () => {
                                 htmlFor="password"
                                 className="block text-sm font-medium text-gray-300"
                             >
-                                Password
+                                Mật khẩu
                             </label>
                             <div className="mt-1 relative rounded-md shadow-sm">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -124,19 +183,40 @@ const SignUpPage = () => {
 
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     required
                                     value={formData.password}
                                     onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            password: e.target.value,
-                                        })
+                                        validatePassword(e.target.value)
                                     }
                                     className="block w-full px-3 py-2 pl-10 bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
                                     placeholder="*********"
                                 />
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                                    {showPassword ? (
+                                        <Eye
+                                            size={20}
+                                            className="text-gray-400"
+                                            onClick={() =>
+                                                setShowPassword(false)
+                                            }
+                                        />
+                                    ) : (
+                                        <EyeOff
+                                            size={20}
+                                            className="text-gray-400"
+                                            onClick={() =>
+                                                setShowPassword(true)
+                                            }
+                                        />
+                                    )}
+                                </div>
                             </div>
+                            {error.password && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {error.password}
+                                </p>
+                            )}
                         </div>
 
                         {/* confirm password */}
@@ -145,32 +225,65 @@ const SignUpPage = () => {
                                 htmlFor="confirmPassword"
                                 className="block text-sm font-medium text-gray-300"
                             >
-                                Confirm password
+                                Xác nhận lại mật khẩu
                             </label>
                             <div className="mt-1 relative rounded-md shadow-sm">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <CheckCircle
                                         size={20}
-                                        className="text-gray-400"
+                                        className={`${
+                                            error.confirmPassword ===
+                                            "Mật khẩu không khớp"
+                                                ? "text-red-600"
+                                                : formData.confirmPassword !==
+                                                  ""
+                                                ? "text-green-400"
+                                                : '"text-gray-400"'
+                                        }`}
                                         aria-hidden={true}
                                     />
                                 </div>
 
                                 <input
                                     id="confirmPassword"
-                                    type="password"
+                                    type={
+                                        showConfirmPassword
+                                            ? "text"
+                                            : "password"
+                                    }
                                     required
                                     value={formData.confirmPassword}
                                     onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            confirmPassword: e.target.value,
-                                        })
+                                        validateConfirmPassword(e.target.value)
                                     }
                                     className="block w-full px-3 py-2 pl-10 bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                                    placeholder="*******"
+                                    placeholder="*********"
                                 />
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                                    {showConfirmPassword ? (
+                                        <Eye
+                                            size={20}
+                                            className="text-gray-400"
+                                            onClick={() =>
+                                                setShowConfirmPassword(false)
+                                            }
+                                        />
+                                    ) : (
+                                        <EyeOff
+                                            size={20}
+                                            className="text-gray-400"
+                                            onClick={() =>
+                                                setShowConfirmPassword(true)
+                                            }
+                                        />
+                                    )}
+                                </div>
                             </div>
+                            {error.confirmPassword && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {error.confirmPassword}
+                                </p>
+                            )}
                         </div>
 
                         {/* button */}

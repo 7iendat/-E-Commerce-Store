@@ -36,7 +36,7 @@ const FeaturedProduct = ({ featuredProducts }) => {
         <div className="py-12">
             <div className="container mx-auto px-4">
                 <h2 className="text-center text-5xl sm:text-6xl font-bold text-emerald-400 mb-4">
-                    Featured
+                    Sản phẩm đặc trưng
                 </h2>
                 <div className="relative">
                     <div className="overflow-hidden">
@@ -76,7 +76,7 @@ const FeaturedProduct = ({ featuredProducts }) => {
 												flex items-center justify-center"
                                             >
                                                 <ShoppingCart className="w-5 h-5 mr-2" />
-                                                Add to Cart
+                                                Thêm vào giỏ
                                             </button>
                                         </div>
                                     </div>

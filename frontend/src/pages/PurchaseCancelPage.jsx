@@ -17,18 +17,18 @@ const PurchaseCancelPage = () => {
                         <XCircle className=" text-red-400 w-16 h-16 mb-4 " />
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-center text-red-400 mb-2">
-                        Purchase Cancelled!
+                        Thanh toán đã hủy!
                     </h1>
                     <p className="text-gray-300 text-center mb-2">
-                        Your order has been cancelled. No charges have been
-                        made.
+                        Đơn hàng của bạn đã bị hủy. Không có khoản phí nào được
+                        tính.
                     </p>
 
                     <div className="bg-gray-700 rounded-lg p-4 mb-6">
                         <p>
-                            If you encountered any issues during the checkout
-                            process, please don't hesitate to contact our
-                            support team.
+                            Nếu bạn gặp bất kỳ vấn đề nào trong quá trình thanh
+                            toán , vui lòng liên hệ với nhóm hỗ trợ của chúng
+                            tôi.
                         </p>
                     </div>
 
@@ -38,7 +38,7 @@ const PurchaseCancelPage = () => {
                             className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 font-bold py-2 px-4 rounded transition duration-300 flex items-center justify-center"
                         >
                             <ArrowLeft className="ml-1" size={16} />
-                            Return to Shop
+                            Quay về cửa hàng
                         </Link>
                     </div>
                 </div>

@@ -38,7 +38,7 @@ const GiftCouponCart = () => {
                         htmlFor="voucher"
                         className="mb-2 block text-sm font-medium text-gray-300"
                     >
-                        Do you have a voucher or gift card?
+                        Bạn có phiếu giảm giá hoặc thẻ quà tặng?
                     </label>
                     <input
                         type="text"
@@ -58,14 +58,14 @@ const GiftCouponCart = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={handleApplyCoupon}
                 >
-                    Apply Code
+                    Áp dụng mã
                 </motion.button>
             </div>
 
             {isCouponApplied && coupon && (
                 <div className="mt-4">
                     <h3 className="text-lg font-medium text-gray-300">
-                        Applied Coupon
+                        Áp dụng mã thành công
                     </h3>
                     <p>
                         {coupon.code} - {coupon.discountPercentage}% off
@@ -78,7 +78,7 @@ const GiftCouponCart = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleRemoveCoupon}
                     >
-                        Remove Code
+                        Bỏ chọn mã giảm giá
                     </motion.button>
                 </div>
             )}

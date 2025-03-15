@@ -42,14 +42,12 @@ const OrderSummary = () => {
             transition={{ duration: 0.5 }}
             className="space-y-4 rounded-lg border border-gray-700 bg-gray-700 p-4 shadow-sm sm:p-6"
         >
-            <p className="text-xl font-semibold text-emerald-400">
-                Order summary
-            </p>
+            <p className="text-xl font-semibold text-emerald-400">Đơn hàng</p>
             <div className="space-y-6">
                 <div className="space-y-2">
                     <dl className="flex items-center justify-between gap-4">
                         <dt className="text-base font-normal text-gray-300">
-                            Original price
+                            Giá ban đầu
                         </dt>
                         <dd className="text-base font-medium text-white">
                             ${formattedSubtotal}
@@ -59,7 +57,7 @@ const OrderSummary = () => {
                     {savings > 0 && (
                         <dl className="flex items-center justify-between gap-4">
                             <dt className="text-base font-normal text-gray-300">
-                                Savings
+                                Tiết kiệm
                             </dt>
                             <dd className="text-base font-medium text-emerald-400">
                                 ${formattedSavings}
@@ -70,7 +68,7 @@ const OrderSummary = () => {
                     {coupon && isCouponApplied && (
                         <dl className="flex items-center justify-between gap-4">
                             <dt className="text-base font-normal text-gray-300">
-                                Coupon ({coupon.code})
+                                Mã khuyến mãi ({coupon.code})
                             </dt>
                             <dd className="text-base font-medium text-emerald-600">
                                 -{coupon.discountPercentage}%
@@ -80,7 +78,7 @@ const OrderSummary = () => {
 
                     <dl className="flex items-center justify-between gap-4 border-t border-gray-600 pt-2">
                         <dt className="text-base font-normal text-gray-300">
-                            Total
+                            Tổng cộng
                         </dt>
                         <dd className="text-base font-medium text-emerald-600">
                             ${formattedTotal}
@@ -94,7 +92,7 @@ const OrderSummary = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={handlePayment}
                 >
-                    Proceed to Checkout
+                    Thanh toán
                 </motion.button>
 
                 <div className="flex items-center justify-center gap-2">
@@ -105,7 +103,7 @@ const OrderSummary = () => {
                         to={"/"}
                         className="inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline"
                     >
-                        Continue Shopping
+                        Tiếp tục mua sắm
                     </Link>
 
                     <MoveRight size={16} />
