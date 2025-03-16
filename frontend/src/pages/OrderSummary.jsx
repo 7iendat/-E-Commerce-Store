@@ -13,9 +13,9 @@ const stripePromise = loadStripe(
 const OrderSummary = () => {
     const { subTotal, total, coupon, isCouponApplied, cart } = useCartStore();
     const savings = total - subTotal;
-    const formattedSubtotal = subTotal.toFixed(2);
-    const formattedTotal = total.toFixed(2);
-    const formattedSavings = savings.toFixed(2);
+    const formattedSubtotal = subTotal.toLocaleString("vi-VN");
+    const formattedTotal = total.toLocaleString("vi-VN");
+    const formattedSavings = savings.toLocaleString("vi-VN");
 
     const handlePayment = async () => {
         const stripe = await stripePromise;
@@ -50,7 +50,7 @@ const OrderSummary = () => {
                             Giá ban đầu
                         </dt>
                         <dd className="text-base font-medium text-white">
-                            ${formattedSubtotal}
+                            {formattedSubtotal} VND
                         </dd>
                     </dl>
 
@@ -60,7 +60,7 @@ const OrderSummary = () => {
                                 Tiết kiệm
                             </dt>
                             <dd className="text-base font-medium text-emerald-400">
-                                ${formattedSavings}
+                                {formattedSavings} VND
                             </dd>
                         </dl>
                     )}
@@ -81,7 +81,7 @@ const OrderSummary = () => {
                             Tổng cộng
                         </dt>
                         <dd className="text-base font-medium text-emerald-600">
-                            ${formattedTotal}
+                            {formattedTotal} VND
                         </dd>
                     </dl>
                 </div>

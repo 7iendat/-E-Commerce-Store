@@ -2,8 +2,6 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import axiosInstance from "../libs/axios";
 
-console.log("check", axiosInstance.getUri());
-
 const useProductStore = create((set, get) => ({
     products: [],
     loading: false,

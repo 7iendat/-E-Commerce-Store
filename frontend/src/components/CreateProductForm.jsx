@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Loader, PlusCircle, Upload } from "lucide-react";
+import { Loader, PlusCircle, Upload, X } from "lucide-react";
 import useProductStore from "../stores/useProductStore";
 
 const categories = [
@@ -12,6 +12,7 @@ const categories = [
     "suits",
     "bags",
 ];
+
 const CreateProductForm = () => {
     const [newProduct, setNewProduct] = useState({
         name: "",
@@ -25,7 +26,6 @@ const CreateProductForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             await createProduct(newProduct);
             setNewProduct({
@@ -36,7 +36,7 @@ const CreateProductForm = () => {
                 image: "",
             });
         } catch (error) {
-            console.log("error when create product", error);
+            console.log("Lỗi khi tạo sản phẩm", error);
         }
     };
 
@@ -47,9 +47,12 @@ const CreateProductForm = () => {
             reader.onloadend = () => {
                 setNewProduct({ ...newProduct, image: reader.result });
             };
-
             reader.readAsDataURL(file);
         }
+    };
+
+    const removeImage = () => {
+        setNewProduct({ ...newProduct, image: "" });
     };
 
     return (
@@ -64,7 +67,7 @@ const CreateProductForm = () => {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                {/* name */}
+                {/* Name */}
                 <div>
                     <label
                         htmlFor="name"
@@ -75,7 +78,6 @@ const CreateProductForm = () => {
                     <input
                         type="text"
                         id="name"
-                        name="name"
                         value={newProduct.name}
                         onChange={(e) =>
                             setNewProduct({
@@ -83,22 +85,21 @@ const CreateProductForm = () => {
                                 name: e.target.value,
                             })
                         }
-                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
                         required
                     />
                 </div>
 
-                {/* description */}
+                {/* Description */}
                 <div>
                     <label
                         htmlFor="description"
                         className="block text-sm font-medium text-gray-300"
                     >
-                        Môt tả sản phẩm
+                        Mô tả sản phẩm
                     </label>
                     <textarea
                         id="description"
-                        name="description"
                         value={newProduct.description}
                         onChange={(e) =>
                             setNewProduct({
@@ -107,12 +108,12 @@ const CreateProductForm = () => {
                             })
                         }
                         rows={3}
-                        className="mt-1 resize-none block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
                         required
                     />
                 </div>
 
-                {/* price */}
+                {/* Price */}
                 <div>
                     <label
                         htmlFor="price"
@@ -123,7 +124,6 @@ const CreateProductForm = () => {
                     <input
                         type="number"
                         id="price"
-                        name="price"
                         value={newProduct.price}
                         onChange={(e) =>
                             setNewProduct({
@@ -131,24 +131,21 @@ const CreateProductForm = () => {
                                 price: e.target.value,
                             })
                         }
-                        step={1}
-                        min={0}
-                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
                         required
                     />
                 </div>
 
-                {/* category */}
+                {/* Category */}
                 <div>
                     <label
                         htmlFor="category"
                         className="block text-sm font-medium text-gray-300"
                     >
-                        Loại
+                        Loại sản phẩm
                     </label>
                     <select
                         id="category"
-                        name="category"
                         value={newProduct.category}
                         onChange={(e) =>
                             setNewProduct({
@@ -156,7 +153,7 @@ const CreateProductForm = () => {
                                 category: e.target.value,
                             })
                         }
-                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        className="mt-1 block w-full bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
                         required
                     >
                         <option value="">Chọn loại</option>
@@ -168,47 +165,57 @@ const CreateProductForm = () => {
                     </select>
                 </div>
 
-                {/* image */}
-                <div className="mt-2 flex items-center ">
-                    <input
-                        type="file"
-                        id="image"
-                        className="sr-only "
-                        accept="image/*"
-                        onChange={handleImageChange}
-                    />
-                    <label
-                        htmlFor="image"
-                        className="cursor-pointer bg-gray-700 py-2 px-3 border border-gray-600 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-emerald-500"
-                    >
-                        <Upload className="h-5 w-5 inline-block mr-2" />
-                        Tải ảnh lên
-                    </label>
-
-                    {newProduct.image && (
-                        <span className="ml-3 text-sm text-gray-400">
-                            Ảnh đã được tải lên
-                        </span>
+                {/* Image Upload */}
+                <div className="mt-2 flex flex-col items-center">
+                    {!newProduct.image ? (
+                        <>
+                            <input
+                                type="file"
+                                id="image"
+                                className="sr-only"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            <label
+                                htmlFor="image"
+                                className="cursor-pointer bg-gray-700 py-2 px-3 border border-gray-600 rounded-md text-gray-400 hover:bg-gray-600"
+                            >
+                                <Upload className="h-5 w-5 inline-block mr-2" />
+                                Chọn ảnh
+                            </label>
+                        </>
+                    ) : (
+                        <div className="relative">
+                            <img
+                                src={newProduct.image}
+                                alt="Ảnh sản phẩm"
+                                className="w-32 h-32 object-cover rounded-lg shadow-md"
+                            />
+                            <button
+                                onClick={removeImage}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
                     )}
                 </div>
 
-                {/* button */}
+                {/* Submit Button */}
                 <button
                     type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
+                    className="w-full flex justify-center py-2 px-4 rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
                     disabled={loading}
                 >
                     {loading ? (
                         <>
-                            <Loader
-                                className="mr-2 h-5 w-5 animate-spin"
-                                aria-hidden={true}
-                            />
-                            Loading...
+                            <Loader className="mr-2 h-5 w-5 animate-spin" />
+                            Đang tải...
                         </>
                     ) : (
                         <>
-                            <PlusCircle className="mr-2 h-5 w-5" /> Tạo sản phẩm
+                            <PlusCircle className="mr-2 h-5 w-5" />
+                            Tạo sản phẩm
                         </>
                     )}
                 </button>

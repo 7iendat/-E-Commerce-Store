@@ -1,15 +1,19 @@
 import { ShoppingCart } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router"; // Import useNavigate
 import useUserStore from "../stores/useUserStore";
 import toast from "react-hot-toast";
 import useCartStore from "../stores/useCartStore";
 
 const ProductCard = ({ product }) => {
+    const navigate = useNavigate(); // Hook điều hướng
     const { user } = useUserStore();
     const { addToCart } = useCartStore();
     const [loading, setLoading] = useState(false);
 
-    const handleAddToCart = async () => {
+    const handleAddToCart = async (e) => {
+        e.stopPropagation(); // Ngăn chặn chuyển hướng khi click vào nút giỏ hàng
+
         if (!user) {
             toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ!", {
                 id: "login",
@@ -20,12 +24,14 @@ const ProductCard = ({ product }) => {
         setLoading(true);
         await new Promise((resolve) => setTimeout(resolve, 500)); // Giả lập loading
         addToCart(product);
-
         setLoading(false);
     };
 
     return (
-        <div className="relative flex flex-col w-full overflow-hidden rounded-lg border border-gray-700 shadow-lg transition-transform hover:scale-105">
+        <div
+            className="relative flex flex-col w-full overflow-hidden rounded-lg border border-gray-700 shadow-lg transition-transform hover:scale-105 cursor-pointer"
+            onClick={() => navigate(`/products/${product._id}`)} // Điều hướng khi click
+        >
             {/* Hình ảnh */}
             <div className="relative mx-3 mt-3 h-60 overflow-hidden rounded-xl">
                 <img
@@ -42,7 +48,7 @@ const ProductCard = ({ product }) => {
                     {product.name}
                 </h5>
                 <p className="mt-2 text-3xl font-bold text-emerald-400">
-                    ${product.price}
+                    {product.price.toLocaleString("vi-VN")} VND
                 </p>
 
                 {/* Nút Thêm vào giỏ */}

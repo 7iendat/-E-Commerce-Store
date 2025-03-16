@@ -33,6 +33,13 @@ const SearchOverlay = () => {
         return () => handler.cancel(); // Cleanup khi unmount hoặc input thay đổi
     }, [inputValue, setSearchQuery, setResults]);
 
+    useEffect(() => {
+        if (!isOpen) {
+            setInputValue(""); // Xóa input khi đóng overlay
+            setResults([]); // Xóa kết quả tìm kiếm
+        }
+    }, [isOpen, setResults]);
+
     if (!isOpen) return null;
 
     return (

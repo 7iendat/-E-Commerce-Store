@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import useCartStore from "../stores/useCartStore";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import useUserStore from "../stores/useUserStore";
+import toast from "react-hot-toast";
 
 const FeaturedProduct = ({ featuredProducts }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(4);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => {
@@ -15,7 +19,6 @@ const FeaturedProduct = ({ featuredProducts }) => {
         };
 
         handleResize();
-
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -27,11 +30,31 @@ const FeaturedProduct = ({ featuredProducts }) => {
     const prevSlide = () => {
         setCurrentIndex((prevIndex) => prevIndex - itemsPerPage);
     };
+
+    const { user } = useUserStore();
     const { addToCart } = useCartStore();
+    const [loading, setLoading] = useState(false);
+
+    const handleAddToCart = async (e, product) => {
+        e.stopPropagation(); // Ngăn chặn chuyển hướng khi click vào nút giỏ hàng
+
+        if (!user) {
+            toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ!", {
+                id: "login",
+            });
+            return;
+        }
+
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Giả lập loading
+        addToCart(product);
+        setLoading(false);
+    };
 
     const isStartDisabled = currentIndex === 0;
     const isEndDisabled =
         currentIndex >= featuredProducts.length - itemsPerPage;
+
     return (
         <div className="py-12">
             <div className="container mx-auto px-4">
@@ -50,6 +73,9 @@ const FeaturedProduct = ({ featuredProducts }) => {
                         >
                             {featuredProducts?.map((product) => (
                                 <div
+                                    onClick={() =>
+                                        navigate(`/products/${product._id}`)
+                                    }
                                     key={product._id}
                                     className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0 px-2"
                                 >
@@ -64,7 +90,7 @@ const FeaturedProduct = ({ featuredProducts }) => {
 
                                         {/* Nội dung */}
                                         <div className="p-4">
-                                            {/* Tên sản phẩm (Giới hạn nhưng không bị che mất) */}
+                                            {/* Tên sản phẩm */}
                                             <div className="relative group">
                                                 <h3 className="text-lg font-semibold text-white mb-2 truncate">
                                                     {product.name}
@@ -78,13 +104,16 @@ const FeaturedProduct = ({ featuredProducts }) => {
 
                                             {/* Giá tiền */}
                                             <p className="text-emerald-300 font-medium mb-4">
-                                                ${product.price.toFixed(2)}
+                                                {product.price?.toLocaleString(
+                                                    "vi-VN"
+                                                )}
+                                                VND
                                             </p>
 
                                             {/* Nút Thêm vào giỏ */}
                                             <button
-                                                onClick={() =>
-                                                    addToCart(product)
+                                                onClick={(e) =>
+                                                    handleAddToCart(e, product)
                                                 }
                                                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
                                             >

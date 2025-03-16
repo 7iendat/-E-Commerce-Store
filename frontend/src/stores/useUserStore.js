@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axiosInstance from "../libs/axios";
 import { toast } from "react-hot-toast";
 
-const useUserStore = create((set, get) => ({
+const useUserStore = create((set) => ({
     user: null,
     loading: false,
     checkingAuth: true,
@@ -24,6 +24,8 @@ const useUserStore = create((set, get) => ({
             });
 
             set({ user: res.data, loading: false });
+            localStorage.setItem("token", res.data.token); // Lưu token
+            axiosInstance.defaults.headers.Authorization = `Bearer ${res.data.token}`;
             toast.success("Account created successfully!");
         } catch (error) {
             toast.error(error.response?.data?.message || "An error occurred");
@@ -42,6 +44,8 @@ const useUserStore = create((set, get) => ({
             });
 
             set({ user: res.data, loading: false });
+            localStorage.setItem("token", res.data.token); // Lưu token
+            axiosInstance.defaults.headers.Authorization = `Bearer ${res.data.token}`;
             toast.success("Login successful!");
         } catch (error) {
             toast.error(error.response?.data?.message || "An error occurred");
@@ -50,27 +54,35 @@ const useUserStore = create((set, get) => ({
     },
 
     // ✅ Đăng xuất
-    logout: async () => {
-        try {
-            await axiosInstance.post("/auth/logout");
-        } catch (error) {
-            toast.error(error.response?.data?.message || "An error occurred");
-        }
-
-        set({ user: null });
+    logout: () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        set({ user: null });
+        axiosInstance.defaults.headers.Authorization = null;
         toast.success("Logged out successfully!");
+        window.location.href = "/login"; // Chuyển về trang đăng nhập
     },
 
     // ✅ Kiểm tra phiên đăng nhập
     checkAuth: async () => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            set({ user: null, checkingAuth: false });
+            return;
+        }
+
         set({ checkingAuth: true });
+        axiosInstance.defaults.headers.Authorization = `Bearer ${token}`;
 
         try {
             const res = await axiosInstance.get("/auth/profile");
             set({ user: res.data });
         } catch (error) {
-            console.error(error.response?.data?.message || "An error occurred");
+            console.error(
+                "Không thể xác thực:",
+                error.response?.data?.message || "Lỗi không xác định"
+            );
+            localStorage.removeItem("token");
             set({ user: null });
         } finally {
             set({ checkingAuth: false });
@@ -82,11 +94,13 @@ const useUserStore = create((set, get) => ({
         try {
             const res = await axiosInstance.post("/auth/refresh");
             localStorage.setItem("token", res.data.token); // Lưu lại token mới
+            axiosInstance.defaults.headers.Authorization = `Bearer ${res.data.token}`;
             return res.data.token;
         } catch (error) {
             console.error("Failed to refresh token:", error);
-            get().logout(); // Nếu refresh thất bại, đăng xuất
-            throw error;
+            localStorage.removeItem("token");
+            set({ user: null });
+            return null;
         }
     },
 }));

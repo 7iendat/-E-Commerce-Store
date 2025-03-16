@@ -5,20 +5,19 @@ import {
     Search,
     ShoppingCart,
     UserPlus2,
+    UserCircle, // Import icon cho profile
 } from "lucide-react";
 import React from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link } from "react-router-dom"; // Fix: Dùng "react-router-dom" thay vì "react-router"
 import useUserStore from "../stores/useUserStore";
 import useCartStore from "../stores/useCartStore";
 import useSearchStore from "../stores/useSearchStore";
-// import useProductStore from "../stores/useProductStore";
 
 const Navbar = () => {
     const { user, logout } = useUserStore();
+    console.log(user);
     const isAdmin = user?.role === "admin";
     const { cart } = useCartStore();
-    // const { search, products, setSearch } = useProductStore();
-    // console.log("prod", products);
     const { openSearch } = useSearchStore();
 
     return (
@@ -42,25 +41,16 @@ const Navbar = () => {
                         </button>
                     </div>
 
-                    {/* {products.length !== 0 && (
-                        <div className="w-1/3">
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm sản phẩm..."
-                                className="block w-full px-3 py-2 pl-10 bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </div>
-                    )} */}
-
                     <nav className="flex flex-wrap items-center gap-4">
                         <Link
                             to={"/"}
-                            className="text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
+                            className="text-white hover:text-emerald-400 transition duration-300 ease-in-out"
                         >
-                            Trang chủ
+                            <span className="hidden sm:inline text-base ">
+                                Trang chủ
+                            </span>
                         </Link>
+
                         {user && (
                             <Link to={"/cart"} className="relative group">
                                 <ShoppingCart
@@ -91,22 +81,36 @@ const Navbar = () => {
                         )}
 
                         {user ? (
-                            <button
-                                onClick={() => logout()}
-                                className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
-                            >
-                                <LogOut size={18} />
-                                <span className="hidden sm:inline ml-2">
-                                    Đăng xuất
-                                </span>
-                            </button>
+                            <>
+                                {/* ✅ Nút xem profile */}
+                                <Link
+                                    to={"/profile"}
+                                    className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
+                                >
+                                    <UserCircle size={18} />
+                                    <span className="hidden sm:inline ml-2">
+                                        Hồ sơ
+                                    </span>
+                                </Link>
+
+                                {/* ✅ Nút đăng xuất */}
+                                <button
+                                    onClick={() => logout()}
+                                    className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
+                                >
+                                    <LogOut size={18} />
+                                    <span className="hidden sm:inline ml-2">
+                                        Đăng xuất
+                                    </span>
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link
                                     to={"/signup"}
                                     className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
                                 >
-                                    <UserPlus2 size={18} className="mr-2" />{" "}
+                                    <UserPlus2 size={18} className="mr-2" />
                                     Đăng kí
                                 </Link>
 

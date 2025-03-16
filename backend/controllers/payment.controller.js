@@ -13,22 +13,24 @@ export const createCheckoutSession = async (req, res) => {
 
         let totalAmount = 0;
         const lineItems = products.map((p) => {
-            const amount = Math.round(p.price * 100);
+            const amount = Math.round(p.price); // Đã là VND, không nhân với 100
             totalAmount += amount * p.quantity;
+
             return {
                 price_data: {
-                    currency: "usd",
+                    currency: "vnd",
                     product_data: {
                         name: p.name,
                         images: [p.image],
                     },
-                    unit_amount: amount,
+                    unit_amount: amount, // Không cần nhân 100
                 },
                 quantity: p.quantity || 1,
             };
         });
 
         let coupon = null;
+        let discountAmount = 0;
 
         if (couponCode) {
             coupon = await Coupon.findOne({
@@ -38,9 +40,11 @@ export const createCheckoutSession = async (req, res) => {
             });
 
             if (coupon) {
-                totalAmount -= Math.round(
+                discountAmount = Math.round(
                     (totalAmount * coupon.discountPercentage) / 100
                 );
+                discountAmount = Math.min(discountAmount, totalAmount); // Không cho giảm quá tổng tiền
+                totalAmount -= discountAmount;
             }
         }
 
@@ -72,12 +76,14 @@ export const createCheckoutSession = async (req, res) => {
             },
         });
 
+        // Nếu tổng tiền > 20,000 VND, tạo mã giảm giá mới
         if (totalAmount > 20000) {
             await createNewCoupon(req.user._id);
         }
+
         return res
             .status(200)
-            .json({ id: session.id, totalAmount: totalAmount / 100 });
+            .json({ id: session.id, totalAmount: totalAmount });
     } catch (error) {
         console.log("error in createCheckoutSession", error.message);
         return res
@@ -103,11 +109,20 @@ export const checkSuccess = async (req, res) => {
                     }
                 );
             }
+
+            // Kiểm tra metadata
             if (!session.metadata || !session.metadata.products) {
                 throw new Error("Metadata or products is missing");
             }
-            // create new order
-            const products = JSON.parse(session.metadata.products);
+
+            let products;
+            try {
+                products = JSON.parse(session.metadata.products);
+            } catch (err) {
+                throw new Error("Invalid products metadata format");
+            }
+
+            // Tạo đơn hàng
             const newOrder = new Order({
                 user: session.metadata.userId,
                 products: products.map((p) => ({
@@ -115,8 +130,7 @@ export const checkSuccess = async (req, res) => {
                     quantity: p.quantity,
                     price: p.price,
                 })),
-                totalAmount: session.amount_total / 100,
-                // paymentIntent: session.payment_intent,
+                totalAmount: session.amount_total, // Đã đúng đơn vị VND
                 stripeSessionId: sessionId,
             });
 
@@ -125,7 +139,7 @@ export const checkSuccess = async (req, res) => {
             return res.status(200).json({
                 success: true,
                 message:
-                    "payment successful, order created, and coupon deactivated if used",
+                    "Payment successful, order created, and coupon deactivated if used",
                 orderId: newOrder._id,
             });
         }
@@ -152,7 +166,7 @@ const createNewCoupon = async (userId) => {
     const newCoupon = new Coupon({
         code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
         discountPercentage: 10,
-        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30days
+        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         userId: userId,
     });
 
