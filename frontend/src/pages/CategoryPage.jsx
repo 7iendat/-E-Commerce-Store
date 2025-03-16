@@ -5,17 +5,18 @@ import { motion } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 
 const CategoryPage = () => {
-    const { fetchProductsByCategory, products } = useProductStore();
+    const { fetchProductsByCategory, products, setSortBy, sortBy } =
+        useProductStore();
 
     const { category } = useParams();
 
     useEffect(() => {
         fetchProductsByCategory(category);
-    }, [fetchProductsByCategory, category]);
+    }, [fetchProductsByCategory, category, sortBy]);
 
     return (
         <div className="min-h-screen">
-            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 ">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -24,7 +25,17 @@ const CategoryPage = () => {
                 >
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                 </motion.div>
-
+                <select
+                    className="p-2 border rounded w-40 mb-4 bg-emerald-700 text-white font-semibold hover:cursor-pointer "
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                >
+                    <option value="">Sắp xếp theo</option>
+                    <option value="price_asc">Giá: Thấp đến cao</option>
+                    <option value="price_desc">Giá: Cao đến thấp</option>
+                    <option value="name_asc">Tên: A-Z</option>
+                    <option value="name_desc">Tên: Z-A</option>
+                </select>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

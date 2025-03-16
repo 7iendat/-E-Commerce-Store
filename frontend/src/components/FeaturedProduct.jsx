@@ -54,26 +54,39 @@ const FeaturedProduct = ({ featuredProducts }) => {
                                     className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0 px-2"
                                 >
                                     <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden h-full transition-all duration-300 hover:shadow-xl border border-emerald-500/30">
+                                        {/* Hình ảnh */}
                                         <div className="overflow-hidden">
                                             <img
                                                 src={product.image}
-                                                alt={product.name}
                                                 className="w-full h-48 object-cover transition-transform duration-300 ease-in-out hover:scale-110"
                                             />
                                         </div>
+
+                                        {/* Nội dung */}
                                         <div className="p-4">
-                                            <h3 className="text-lg font-semibold mb-2 text-white">
-                                                {product.name}
-                                            </h3>
+                                            {/* Tên sản phẩm (Giới hạn nhưng không bị che mất) */}
+                                            <div className="relative group">
+                                                <h3 className="text-lg font-semibold text-white mb-2 truncate">
+                                                    {product.name}
+                                                </h3>
+
+                                                {/* Tooltip khi hover vào tên sản phẩm */}
+                                                <div className="absolute hidden group-hover:flex w-max max-w-xs bg-black text-white text-sm p-2 rounded-lg shadow-md -top-10 left-1/2 transform -translate-x-1/2">
+                                                    {product.name}
+                                                </div>
+                                            </div>
+
+                                            {/* Giá tiền */}
                                             <p className="text-emerald-300 font-medium mb-4">
                                                 ${product.price.toFixed(2)}
                                             </p>
+
+                                            {/* Nút Thêm vào giỏ */}
                                             <button
                                                 onClick={() =>
                                                     addToCart(product)
                                                 }
-                                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300
-												flex items-center justify-center"
+                                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
                                             >
                                                 <ShoppingCart className="w-5 h-5 mr-2" />
                                                 Thêm vào giỏ

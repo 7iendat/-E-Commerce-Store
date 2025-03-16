@@ -22,6 +22,7 @@
     "framer-motion": "^12.4.11",
     "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.479.0",
     "mongoose": "^8.11.0",
     "react-confetti": "^6.4.0",

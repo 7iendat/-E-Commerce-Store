@@ -1,24 +1,58 @@
-import { Lock, LogIn, LogOut, ShoppingCart, UserPlus2 } from "lucide-react";
+import {
+    Lock,
+    LogIn,
+    LogOut,
+    Search,
+    ShoppingCart,
+    UserPlus2,
+} from "lucide-react";
 import React from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import useUserStore from "../stores/useUserStore";
 import useCartStore from "../stores/useCartStore";
+import useSearchStore from "../stores/useSearchStore";
+// import useProductStore from "../stores/useProductStore";
 
 const Navbar = () => {
     const { user, logout } = useUserStore();
     const isAdmin = user?.role === "admin";
     const { cart } = useCartStore();
+    // const { search, products, setSearch } = useProductStore();
+    // console.log("prod", products);
+    const { openSearch } = useSearchStore();
 
     return (
         <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
             <div className="container mx-auto px-4 py-3">
                 <div className="flex flex-wrap items-center justify-between">
-                    <Link
-                        to={"/"}
-                        className="flex items-center text-2xl font-bold text-emerald-400 space-x-2"
-                    >
-                        E-commerce
-                    </Link>
+                    <div className="flex items-center justify-between w-full sm:w-auto min-w-0">
+                        <Link
+                            to={"/"}
+                            className="flex items-center text-2xl font-bold text-emerald-400 space-x-2"
+                        >
+                            E-commerce
+                        </Link>
+
+                        <button
+                            onClick={openSearch}
+                            className="flex items-center space-x-2 hover:text-green-400 pl-2"
+                        >
+                            <Search size={20} />
+                            <span className="hidden sm:inline">Tìm kiếm</span>
+                        </button>
+                    </div>
+
+                    {/* {products.length !== 0 && (
+                        <div className="w-1/3">
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm sản phẩm..."
+                                className="block w-full px-3 py-2 pl-10 bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                    )} */}
 
                     <nav className="flex flex-wrap items-center gap-4">
                         <Link

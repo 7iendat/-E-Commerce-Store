@@ -6,11 +6,14 @@ const useUserStore = create((set, get) => ({
     user: null,
     loading: false,
     checkingAuth: true,
+
+    // ✅ Đăng ký tài khoản
     signUp: async ({ name, email, password, confirmPassword }) => {
         set({ loading: true });
+
         if (password !== confirmPassword) {
             set({ loading: false });
-            return toast.error(`Password don't match`);
+            return toast.error(`Passwords don't match`);
         }
 
         try {
@@ -19,84 +22,73 @@ const useUserStore = create((set, get) => ({
                 email,
                 password,
             });
+
             set({ user: res.data, loading: false });
-            toast.success("Account signup successfully!");
+            toast.success("Account created successfully!");
         } catch (error) {
+            toast.error(error.response?.data?.message || "An error occurred");
             set({ loading: false });
-            toast.error(error.response.data.message || "An error occurred");
         }
     },
 
+    // ✅ Đăng nhập
     login: async ({ email, password }) => {
         set({ loading: true });
+
         try {
             const res = await axiosInstance.post("/auth/login", {
                 email,
                 password,
             });
+
             set({ user: res.data, loading: false });
-            toast.success("Login successfully!");
+            toast.success("Login successful!");
         } catch (error) {
+            toast.error(error.response?.data?.message || "An error occurred");
             set({ loading: false });
-            toast.error(error.response.data.message || "An error occurred");
         }
     },
 
+    // ✅ Đăng xuất
     logout: async () => {
         try {
             await axiosInstance.post("/auth/logout");
-            set({ user: null });
-            toast.success("Logout successfully!");
         } catch (error) {
-            toast.error(error.response.data.message || "An error occurred");
+            toast.error(error.response?.data?.message || "An error occurred");
+        }
+
+        set({ user: null });
+        localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        toast.success("Logged out successfully!");
+    },
+
+    // ✅ Kiểm tra phiên đăng nhập
+    checkAuth: async () => {
+        set({ checkingAuth: true });
+
+        try {
+            const res = await axiosInstance.get("/auth/profile");
+            set({ user: res.data });
+        } catch (error) {
+            console.error(error.response?.data?.message || "An error occurred");
+            set({ user: null });
+        } finally {
+            set({ checkingAuth: false });
         }
     },
 
-    checkAuth: async () => {
-        set({ checkingAuth: true });
+    // ✅ Làm mới token (Refresh Token)
+    refreshToken: async () => {
         try {
-            const res = await axiosInstance.get("/auth/profile");
-            set({ user: res.data, checkingAuth: false });
+            const res = await axiosInstance.post("/auth/refresh");
+            localStorage.setItem("token", res.data.token); // Lưu lại token mới
+            return res.data.token;
         } catch (error) {
-            set({ checkingAuth: false, user: null });
-            console.error(error.response?.data?.message || "An error occurred");
+            console.error("Failed to refresh token:", error);
+            get().logout(); // Nếu refresh thất bại, đăng xuất
+            throw error;
         }
     },
 }));
-
-// TODO: Implement the axios interceptors for refreshing access token
-
-// Axios interceptor for token refresh
-let refreshPromise = null;
-
-axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-
-            try {
-                // If a refresh is already in progress, wait for it to complete
-                if (refreshPromise) {
-                    await refreshPromise;
-                    return axiosInstance(originalRequest);
-                }
-
-                // Start a new refresh process
-                refreshPromise = useUserStore.getState().refreshToken();
-                await refreshPromise;
-                refreshPromise = null;
-
-                return axiosInstance(originalRequest);
-            } catch (refreshError) {
-                // If refresh fails, redirect to login or handle as needed
-                useUserStore.getState().logout();
-                return Promise.reject(refreshError);
-            }
-        }
-        return Promise.reject(error);
-    }
-);
 
 export default useUserStore;

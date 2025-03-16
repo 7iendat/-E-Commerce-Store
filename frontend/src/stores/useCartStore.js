@@ -51,7 +51,7 @@ const useCartStore = create((set, get) => ({
     addToCart: async (product) => {
         try {
             await axiosInstance.post("/cart", { productId: product._id });
-            toast.success("Product added to cart");
+            toast.success("Đã thêm vào giỏ hàng!");
 
             set((prevState) => {
                 const existingItems = prevState.cart.find(

@@ -7,6 +7,10 @@ console.log("check", axiosInstance.getUri());
 const useProductStore = create((set, get) => ({
     products: [],
     loading: false,
+    search: "",
+    sortBy: "",
+    setSearch: (search) => set({ search }),
+    setSortBy: (sortBy) => set({ sortBy }),
 
     setProducts: (products) => set({ products }),
     createProduct: async (productData) => {
@@ -29,7 +33,10 @@ const useProductStore = create((set, get) => ({
     fetchAllProducts: async () => {
         set({ loading: true });
         try {
-            const res = await axiosInstance.get("/products");
+            const { search, sortBy } = get();
+            const res = await axiosInstance.get(
+                `/products?search=${search || ""}&sortBy=${sortBy || ""}`
+            );
             set({ products: res.data.products, loading: false });
         } catch (error) {
             toast.error(
@@ -41,8 +48,11 @@ const useProductStore = create((set, get) => ({
     fetchProductsByCategory: async (category) => {
         set({ loading: true });
         try {
+            const { search, sortBy } = get();
             const res = await axiosInstance.get(
-                `/products/category/${category}`
+                `/products/category/${category}?search=${search || ""}&sortBy=${
+                    sortBy || ""
+                }`
             );
             set({ products: res.data.products, loading: false });
         } catch (error) {

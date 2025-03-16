@@ -1,5 +1,5 @@
-import { ShoppingBag, ShoppingCart } from "lucide-react";
-import React from "react";
+import { ShoppingCart } from "lucide-react";
+import React, { useState } from "react";
 import useUserStore from "../stores/useUserStore";
 import toast from "react-hot-toast";
 import useCartStore from "../stores/useCartStore";
@@ -7,44 +7,60 @@ import useCartStore from "../stores/useCartStore";
 const ProductCard = ({ product }) => {
     const { user } = useUserStore();
     const { addToCart } = useCartStore();
-    const handleAddToCart = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleAddToCart = async () => {
         if (!user) {
-            toast.error("Please login to add products to cart!", {
+            toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ!", {
                 id: "login",
             });
             return;
-        } else {
-            addToCart(product);
         }
+
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Giả lập loading
+        addToCart(product);
+
+        setLoading(false);
     };
+
     return (
-        <div className="flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 shadow-lg ">
-            <div className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl">
+        <div className="relative flex flex-col w-full overflow-hidden rounded-lg border border-gray-700 shadow-lg transition-transform hover:scale-105">
+            {/* Hình ảnh */}
+            <div className="relative mx-3 mt-3 h-60 overflow-hidden rounded-xl">
                 <img
                     src={product.image}
                     alt={product.name}
-                    className="object-cover w-full"
+                    className="object-cover w-full h-full"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 bg-black bg-opacity-10"></div>
             </div>
 
-            <div className=" mt-4 px-5 pb-5 ">
-                <h5 className="text-xl font-semibold tracking-tight text-white">
+            {/* Thông tin sản phẩm */}
+            <div className="px-5 pb-5 mt-4">
+                <h5 className="text-lg font-semibold text-white truncate">
                     {product.name}
                 </h5>
-                <div className="mt-2 mb-5 flex items-center justify-between">
-                    <p>
-                        <span className="text-3xl font-bold text-emerald-400 ">
-                            ${product.price}
-                        </span>
-                    </p>
-                </div>
+                <p className="mt-2 text-3xl font-bold text-emerald-400">
+                    ${product.price}
+                </p>
 
+                {/* Nút Thêm vào giỏ */}
                 <button
-                    className="flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 "
+                    className={`mt-4 flex items-center justify-center w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white transition ${
+                        loading
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-emerald-600 hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-300"
+                    }`}
                     onClick={handleAddToCart}
+                    disabled={loading}
                 >
-                    <ShoppingCart size={20} className="mr-2" /> Thêm vào giỏ
+                    {loading ? (
+                        <span className="animate-spin mr-2">⏳</span>
+                    ) : (
+                        <ShoppingCart size={20} className="mr-2" />
+                    )}
+                    {loading ? "Đang thêm..." : "Thêm vào giỏ"}
                 </button>
             </div>
         </div>
