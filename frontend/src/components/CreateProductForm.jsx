@@ -107,8 +107,8 @@ const CreateProductForm = () => {
                                 description: e.target.value,
                             })
                         }
-                        rows={3}
-                        className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
+                        rows={6}
+                        className="mt-1 block w-full resize-none bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-emerald-500"
                         required
                     />
                 </div>

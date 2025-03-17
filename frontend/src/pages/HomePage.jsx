@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 
 const categories = [
     { href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
-    { href: "/tshirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
+    { href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
     { href: "/shoes", name: "Shoes", imageUrl: "/shoes.jpg" },
     { href: "/bags", name: "Bags", imageUrl: "/bags.jpg" },
     { href: "/glasses", name: "Glasses", imageUrl: "/glasses.png" },

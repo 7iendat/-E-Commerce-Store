@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-modal .ant-modal-content {
+    background-color: #1f2937 !important; /* bg-gray-800 */
+    color: white;
+    border-radius: 10px;
+}
+
+.custom-modal .ant-modal-header {
+    background-color: #1f2937 !important;
+    border-bottom: none;
+}
+
+.custom-modal .ant-modal-title {
+    color: white !important;
+}
+
+.custom-modal .ant-modal-close {
+    color: white !important;
+}
+
+.custom-modal .ant-modal-footer {
+    background-color: #1f2937 !important;
+    border-top: none;
+}
+
+.custom-modal input,
+.custom-modal textarea,
+.custom-modal select {
+    background-color: #374151 !important; /* bg-gray-700 */
+    color: white !important;
+    border: 1px solid #4b5563; /* border-gray-500 */
+}
+
+.custom-modal input:focus,
+.custom-modal textarea:focus,
+.custom-modal select:focus {
+    background-color: #374151 !important; /* Giữ nguyên màu khi focus */
+    border-color: #10b981 !important; /* focus:border-emerald-500 */
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); /* focus:ring-emerald-500 */
+}

@@ -204,3 +204,29 @@ export const getProductById = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+export const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedData = req.body;
+
+        // Nếu có file ảnh, cập nhật URL ảnh từ Cloudinary
+        if (req.file) {
+            updatedData.image = req.file.path;
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            updatedData,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
